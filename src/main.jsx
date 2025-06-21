@@ -9,7 +9,7 @@ createRoot(document.getElementById('root')).render(
   <HashRouter>
   <AppContextProvider> 
       <App />
-      </AppContextProvider>
+  </AppContextProvider>
  
   </HashRouter>,
 )

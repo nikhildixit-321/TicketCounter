@@ -16,8 +16,8 @@ const Header = () => {
         book appointment <img className='w-3' src={assets.arrow_icon} alt="" /></a>
       </div>
       {/* right side */}
-      <div className='md:w-1/2 relative '>
-        <img className='w-full md:absolute bottom-0 h-auto rounded-lg' src={assets.header_img} alt="" />
+      <div className='md:w-1/2 relative  '>
+        <img className='w-full md:absolute bottom-0 h-[450px] rounded-lg' src={assets.header_img} alt="" />
       </div>
     </div>
   )
