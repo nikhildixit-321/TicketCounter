@@ -1,10 +1,10 @@
-require('dotenv').config()  
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const jwt = require('jsonwebtoken')
 const axios = require('axios')
-const connectDB = require('./bd')
+const connectDB = require('./bd.js')
 const app = express()
 
 // middleware started 
@@ -12,10 +12,10 @@ app.use(cors())
 app.use(express.json())
 
 // database connection
-connectDB() 
+connectDB()
 
 app.get('/', (req, res) => {
-    res.send("Welcome to the Ticket Counter API!")
+  res.send("Welcome to the Ticket Counter API!")
 })
 
 
