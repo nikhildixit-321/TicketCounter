@@ -1,22 +1,65 @@
 import { assets } from '../assets/assets_frontend/assets'
+import { useNavigate } from 'react-router-dom'
+import { useLang } from '../context/LanguageContext'
+
 const Header = () => {
+  const navigate = useNavigate()
+  const { t } = useLang()
+
+  const scrollToSpeciality = () => {
+    const el = document.getElementById('speciality')
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else {
+      navigate('/')
+      setTimeout(() => {
+        document.getElementById('speciality')?.scrollIntoView({ behavior: 'smooth' })
+      }, 300)
+    }
+  }
+
   return (
-    <div className='flex flex-col md:flex-row flex-wrap bg-primary rounded-lg px-20'>
-      {/* left side */}
-      <div className='md:w-1/2 flex flex-col items-start justify-center gap-4 py-10 m-auto md:py-[10vw] md:mb-[-30px]'>
-        <p className='text-3xl md:text-4xl lg:text-5xl text-white font-semibold leading-tight md:leading-tight lg:leading-tight'>
-          BOOK Appointment<br /> with Trusted Doctors
-        </p>
-        <div className='flex flex-col md:flex-row items-center gap-3 text-white text-sm font-light'>
-          <img className='w-28' src={assets.group_profiles} alt="" />
-          <p>Simply browse through our extensive list of trusted doctors, <br className='hidden sm:block ' /> schedule your appointment hassle-free.</p>
+    <div className='relative overflow-hidden bg-primary rounded-2xl px-8 md:px-16 my-4 min-h-[400px] flex items-center shadow-sm'>
+
+      <div className='flex flex-col md:flex-row items-center w-full gap-10 py-10'>
+        {/* Left */}
+        <div className='md:w-1/2 flex flex-col gap-6 animate-fade-in'>
+          <h1 className='text-4xl md:text-5xl lg:text-6xl text-white font-bold leading-tight'>
+            {t('header_title_1')} <br />
+            {t('header_title_2')} <br />
+            {t('header_title_3')}
+          </h1>
+
+          <div className='flex items-center gap-4 text-white/90 text-sm'>
+            <img className='w-24' src={assets.group_profiles} alt="" />
+            <p className='max-w-md'>{t('header_subtitle')}</p>
+          </div>
+
+          <div className='flex flex-col sm:flex-row gap-4'>
+            <button
+              onClick={scrollToSpeciality}
+              className='flex items-center justify-center gap-2 bg-white text-primary font-bold px-10 py-4 rounded-xl hover:bg-gray-50 transition-all'
+            >
+              {t('header_btn_book')}
+              <img className='w-3' src={assets.arrow_icon} alt="" />
+            </button>
+            <button
+              onClick={scrollToSpeciality}
+              className='flex items-center justify-center gap-2 border-2 border-white/30 text-white font-bold px-10 py-4 rounded-xl hover:bg-white/10 transition-all'
+            >
+              {t('header_btn_explore')}
+            </button>
+          </div>
         </div>
-        <a className='flex items-center gap-2 bg-white px-8 py-3 rounded-full text-gray-600 text-sm m-auto md:m-0 hover:scale-105' href="#speciality">
-          Book Appointment <img className='w-3' src={assets.arrow_icon} alt="" /></a>
-      </div>
-      {/* right side */}
-      <div className='hidden md:block md:w-1/2 lg:w-[370px] relative '>
-        <img className='w-full md:absolute bottom-0 h-[450px] rounded-lg' src={assets.header_img} alt="" />
+
+        {/* Right - Doctor Image */}
+        <div className='md:w-1/2 flex justify-center md:justify-end'>
+          <img
+            className='w-full max-w-sm rounded-xl'
+            src={assets.header_img}
+            alt="Doctor"
+          />
+        </div>
       </div>
     </div>
   )

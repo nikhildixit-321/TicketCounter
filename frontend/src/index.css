@@ -1,21 +1,60 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Poppins:wght@300;400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-.active hr{
-    @apply block
-}
-::-webkit-scrollbar{
-    @apply hidden
+/* ===== BASIC RESET & TRANSITIONS ===== */
+* {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
-*{
-    font-family: outfit;
+::-webkit-scrollbar {
+  @apply hidden;
 }
-@media(max-width:740px){
-    .active p{
-        @apply text-white bg-primary
-    }
+
+/* ===== SIMPLE NAV LINK ===== */
+.active hr {
+  @apply block;
+}
+
+@media (max-width: 740px) {
+  .active p {
+    @apply text-white bg-primary;
+  }
+}
+
+/* ===== SIMPLE ANIMATIONS ===== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+/* ===== SIMPLE CARDS ===== */
+.simple-card {
+  @apply bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow duration-300;
+}
+
+/* ===== SIMPLE BUTTONS ===== */
+.btn-primary {
+  @apply bg-primary text-white px-6 py-2.5 rounded-full text-sm font-medium hover:opacity-90 active:scale-95 transition-all;
+}
+
+.btn-outline {
+  @apply border border-gray-300 text-gray-700 px-6 py-2.5 rounded-full text-sm font-medium hover:bg-gray-50 active:scale-95 transition-all;
+}
+
+/* ===== NAVBAR STICKY ===== */
+.navbar-fixed {
+  @apply bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm;
 }
