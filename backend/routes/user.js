@@ -10,6 +10,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 router.post('/signin', async (req, res) => {
     const { email, password } = req.body
     try {
+        console.log("SIGNIN REQUEST:", { email });
         const token = await User.matchPasswordAndGenerateToken(email, password)
         const isProduction = process.env.NODE_ENV === 'production'
         const cookieOptions = {
@@ -20,6 +21,7 @@ router.post('/signin', async (req, res) => {
         };
         return res.cookie('token', token, cookieOptions).json({ token })
     } catch (error) {
+        console.error("SIGNIN ERROR:", error.message);
         return res.status(401).json({ error: "Incorrect email or password" })
     }
 })
@@ -35,19 +37,26 @@ router.get('/logout', (req, res) => {
 
 router.post('/signup', upload.single('image'), async (req, res) => {
     try {
+        console.log("SIGNUP REQUEST:", req.body);
+        console.log("IMAGE FILE:", req.file ? "Present" : "Not present");
+        
         const { name, email, password, phone, role } = req.body
         let profile_pic = '';
         
         if (req.file) {
+            console.log("Uploading image to Cloudinary...");
             // Upload to Cloudinary
             const result = await uploadToCloudinary(req.file.buffer);
             profile_pic = result.secure_url;
+            console.log("Image uploaded:", profile_pic);
         }
         
         const user = await User.create({ name, email, password, phone, role: role || 'user', profile_pic })
         return res.status(201).json(user)
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        console.error("SIGNUP ERROR:", error.message);
+        console.error("Full error:", error);
+        res.status(400).json({ error: error.message });
     }
 })
 
