@@ -18,14 +18,14 @@ const upload = multer({
         fileSize: 5 * 1024 * 1024, // 5MB limit
     },
     fileFilter: (req, file, cb) => {
-        const allowedTypes = /jpeg|jpg|png/;
+        const allowedTypes = /jpeg|jpg|png|pdf/;
         const mimetype = allowedTypes.test(file.mimetype);
         const extname = allowedTypes.test(file.originalname.toLowerCase());
         
         if (mimetype && extname) {
             return cb(null, true);
         }
-        cb(new Error('Only image files are allowed!'));
+        cb(new Error('Only images and PDFs are allowed!'));
     }
 });
 
@@ -34,8 +34,8 @@ const uploadToCloudinary = async (fileBuffer) => {
     return new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
             {
-                folder: 'TicketCounter/UserProfiles',
-                resource_type: 'image',
+                folder: 'TicketCounter/Docs',
+                resource_type: 'auto',
             },
             (error, result) => {
                 if (error) {

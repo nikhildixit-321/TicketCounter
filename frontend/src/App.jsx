@@ -58,12 +58,8 @@ const App = () => {
         } />
 
         <Route path='/login' element={
-          <div className='min-h-screen bg-gray-50'>
-            <Navbar />
-            <div className='mx-4 sm:mx-[10%]'>
-              <Login />
-            </div>
-            <Footer />
+          <div className='min-h-screen'>
+            <Login />
           </div>
         } />
 

@@ -31,7 +31,7 @@ const TopDoctors = () => {
             <div className='bg-gray-50 overflow-hidden'>
               <img
                 className='w-full h-48 object-cover object-top transition-transform duration-300 group-hover:scale-105'
-                src={item.image}
+                src={item.profile_pic || 'https://via.placeholder.com/300x400?text=Doctor'}
                 alt={item.name}
               />
             </div>

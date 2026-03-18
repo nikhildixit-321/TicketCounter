@@ -16,6 +16,7 @@ const cookieParser = require('cookie-parser');
 const connectDB = require('./bd.js')
 const { checkForAuthenticationCookie } = require('./middleware/auth.js');
 const userRouter = require('./routes/user')
+const appointmentRouter = require('./routes/appointment')
 const app = express()
 
 const allowedOrigins = [
@@ -41,15 +42,15 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 
+app.use(checkForAuthenticationCookie('token')) // Uncommented and enabled globally
+
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
 
-// Temporarily commented out for debugging
-// app.use(checkForAuthenticationCookie('token'))
-
 app.use('/user', userRouter)
+app.use('/appointment', appointmentRouter) // Added this line
 
 app.get('/', (req, res) => {
   res.send("Welcome to the Ticket Counter API!")

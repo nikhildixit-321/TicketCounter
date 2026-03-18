@@ -10,10 +10,41 @@ const userSchema = new mongoose.Schema({
     phone: { type: String, default: '' },
     role: { type: String, enum: ['user', 'doctor', 'admin'], default: 'user' },
     profile_pic: { type: String, default: '' },
-    is_verified: { type: Boolean, default: false },
+    is_verified: { type: Boolean, default: false }, // Email/Phone verification
+    
+    // Status for Admin Approval (mostly for doctors)
+    status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+    
+    // Location for proximity search
+    location: {
+        type: { type: String, default: 'Point' },
+        coordinates: { type: [Number], default: [0, 0] } // [longitude, latitude]
+    },
+    address: { type: String, default: '' },
+    city: { type: String, default: '' },
+    state: { type: String, default: '' },
+
+    // Doctor Specific Fields
+    speciality: { type: String, default: '' },
+    degree: { type: String, default: '' },
+    college: { type: String, default: '' },
+    experience: { type: String, default: '' },
+    regNumber: { type: String, default: '' },
+    fees: { type: Number, default: 0 },
+    availability: { type: String, default: '' }, // e.g. "Mon,Tue,Wed"
+    about: { type: String, default: '' },
+    rating: { type: Number, default: 0 },
+    
+    // Documents (Cloudinary URLs)
+    certificate: { type: String, default: '' },
+    idProof: { type: String, default: '' },
+    license: { type: String, default: '' },
+    
     created_at: { type: Date, default: Date.now },
     updated_at: { type: Date, default: Date.now }
 })
+
+userSchema.index({ location: "2dsphere" });
 
 
 userSchema.pre("save", async function () {
