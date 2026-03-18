@@ -37,7 +37,7 @@ router.get('/logout', (req, res) => {
     }).json({ message: "Logged out" });
 });
 
-router.post('/signup', upload.single('image'), async (req, res) => {
+router.post('/signup', upload.single('image'), async (req, res, next) => {
     try {
         console.log("SIGNUP REQUEST:", req.body.email);
         const { name, email, password, phone, role } = req.body;
@@ -62,8 +62,8 @@ router.post('/signup', upload.single('image'), async (req, res) => {
     }
 });
 
-router.post('/google', async (req, res) => {
-    const { token } = req.body;
+router.post('/google', async (req, res, next) => {
+    const { token, role } = req.body;
     try {
         const ticket = await client.verifyIdToken({
             idToken: token,
@@ -76,7 +76,7 @@ router.post('/google', async (req, res) => {
         if (!user) {
             user = await User.create({
                 name, email, profile_pic: picture, 
-                role: 'user', is_verified: true, 
+                role: role || 'user', is_verified: true, 
                 password: '', phone: ''
             });
         }

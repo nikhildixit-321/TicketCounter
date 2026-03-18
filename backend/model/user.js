@@ -16,16 +16,15 @@ const userSchema = new mongoose.Schema({
 })
 
 
-userSchema.pre("save", function (next) {
+userSchema.pre("save", async function () {
     const user = this;
-    if (!user.isModified("password") || !user.password) return next();
+    if (!user.isModified("password") || !user.password) return;
     const salt = randomBytes(16).toString('hex');
     const hashedPassword = createHmac('sha256', salt)
         .update(user.password)
         .digest('hex');
     this.salt = salt;
     this.password = hashedPassword;
-    next();
 });
 
 userSchema.statics.matchPasswordAndGenerateToken = async function (email, password) {

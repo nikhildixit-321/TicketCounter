@@ -53,7 +53,7 @@ const Login = () => {
     try {
       const { credential } = credentialResponse;
       if (!credential) throw new Error("No credential returned from Google");
-      const { data } = await axios.post(backendUrl + '/user/google', { token: credential });
+      const { data } = await axios.post(backendUrl + '/user/google', { token: credential, role });
       if (data.token) {
         localStorage.setItem('token', data.token);
         setToken(data.token);
@@ -97,7 +97,7 @@ const Login = () => {
             ))}
           </div>
 
-          {role === 'user' && state === 'Login' && (
+          {(role === 'user' || role === 'doctor') && (
             <div className='flex flex-col items-center gap-2'>
               <div className='w-full flex justify-center'>
                 <GoogleLogin
@@ -111,7 +111,7 @@ const Login = () => {
               </div>
               <div className='flex items-center w-full gap-2 my-1'>
                 <hr className='flex-1 border-gray-200' />
-                <span className='text-[10px] text-gray-400 font-bold'>OR LOGIN WITH EMAIL</span>
+                <span className='text-[10px] text-gray-400 font-bold'>OR {state === 'Sign up' ? 'SIGN UP' : 'LOGIN'} WITH EMAIL</span>
                 <hr className='flex-1 border-gray-200' />
               </div>
             </div>
