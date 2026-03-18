@@ -3,12 +3,14 @@ import { doctors } from "../assets/assets_frontend/assets";
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
+axios.defaults.withCredentials = true;
+
 export const AppContext = createContext()
 
 const AppContextProvider = (props) => {
 
     const currencySymbol = '₹'
-    const backendUrl = "http://localhost:8000"
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:8000"
     const [token, setToken] = useState(localStorage.getItem('token') ? localStorage.getItem('token') : false)
 
     const value = {

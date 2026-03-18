@@ -5,9 +5,9 @@ const { createTokenForUser } = require('../services/authincation')
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    password: { type: String }, // Optional for OAuth users
     salt: { type: String },
-    phone: { type: String, required: true },
+    phone: { type: String, default: '' },
     role: { type: String, enum: ['user', 'doctor', 'admin'], default: 'user' },
     profile_pic: { type: String, default: '' },
     is_verified: { type: Boolean, default: false },
@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.pre("save", function (next) {
     const user = this;
-    if (!user.isModified("password")) return next();
+    if (!user.isModified("password") || !user.password) return next();
     const salt = randomBytes(16).toString('hex');
     const hashedPassword = createHmac('sha256', salt)
         .update(user.password)

@@ -1,7 +1,8 @@
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import { useContext } from 'react';
+import { AppContext } from './context/AppContext';
 // ── Patient Pages ──
 import Home from './pages/Home'
 import Doctor from './pages/Doctor'
@@ -29,6 +30,14 @@ import DoctorDashboard from './pages/doctor/DoctorDashboard'
 import DoctorAppointments from './pages/doctor/DoctorAppointments'
 import DoctorLayout from './pages/doctor/DoctorLayout'
 
+const ProtectedRoute = ({ children }) => {
+  const { token } = useContext(AppContext)
+  if (!token) {
+    return <Navigate to='/login' />
+  }
+  return children
+}
+
 const App = () => {
   return (
     <>
@@ -37,10 +46,22 @@ const App = () => {
 
         {/* ──────── PATIENT ROUTES ──────── */}
         <Route path='/' element={
+          <ProtectedRoute>
+            <div className='min-h-screen bg-gray-50'>
+              <Navbar />
+              <div className='mx-4 sm:mx-[10%]'>
+                <Home />
+              </div>
+              <Footer />
+            </div>
+          </ProtectedRoute>
+        } />
+
+        <Route path='/login' element={
           <div className='min-h-screen bg-gray-50'>
             <Navbar />
             <div className='mx-4 sm:mx-[10%]'>
-              <Home />
+              <Login />
             </div>
             <Footer />
           </div>
@@ -50,7 +71,6 @@ const App = () => {
         {[
           { path: '/doctors', element: <Doctor /> },
           { path: '/doctors/:speciality', element: <Doctor /> },
-          { path: '/login', element: <Login /> },
           { path: '/about', element: <About /> },
           { path: '/contact', element: <Contact /> },
           { path: '/my-profile', element: <MyProfile /> },
@@ -58,13 +78,15 @@ const App = () => {
           { path: '/appointment/:docId', element: <Appointment /> },
         ].map(({ path, element }) => (
           <Route key={path} path={path} element={
-            <div className='min-h-screen bg-gray-50'>
-              <Navbar />
-              <div className='mx-4 sm:mx-[10%]'>
-                {element}
+            <ProtectedRoute>
+              <div className='min-h-screen bg-gray-50'>
+                <Navbar />
+                <div className='mx-4 sm:mx-[10%]'>
+                  {element}
+                </div>
+                <Footer />
               </div>
-              <Footer />
-            </div>
+            </ProtectedRoute>
           } />
         ))}
 
