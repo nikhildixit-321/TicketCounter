@@ -36,7 +36,14 @@ router.get('/logout', (req, res) => {
 router.post('/signup', upload.single('image'), async (req, res) => {
     try {
         const { name, email, password, phone, role } = req.body
-        const profile_pic = req.file ? req.file.path : ''
+        let profile_pic = '';
+        
+        if (req.file) {
+            // Upload to Cloudinary
+            const result = await uploadToCloudinary(req.file.buffer);
+            profile_pic = result.secure_url;
+        }
+        
         const user = await User.create({ name, email, password, phone, role: role || 'user', profile_pic })
         return res.status(201).json(user)
     } catch (error) {
