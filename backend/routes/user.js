@@ -61,6 +61,8 @@ router.post('/google', async (req, res) => {
         const payload = ticket.getPayload();
         console.log("GOOGLE VERIFIED PAYLOAD:", payload.email);
         
+        const { name, email, picture } = payload;
+        
         let user = await User.findOne({ email });
         if (!user) {
             user = await User.create({
