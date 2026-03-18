@@ -20,6 +20,9 @@ const app = express()
 
 const allowedOrigins = [
   'http://localhost:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174',
   process.env.FRONTEND_URL
 ];
 
@@ -42,7 +45,8 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(checkForAuthenticationCookie('token'))
+// Temporarily commented out for debugging
+// app.use(checkForAuthenticationCookie('token'))
 
 app.use('/user', userRouter)
 
@@ -68,19 +72,20 @@ app.use((err, req, res, next) => {
 
 const startServer = async () => {
   try {
+    console.log('Starting server initialization...');
     await connectDB();
+    console.log('Database connected successfully');
     const PORT = process.env.PORT || 8000;
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`)
     })
   } catch (error) {
     console.error('SERVER FATAL:', error.message);
+    console.error('Full error:', error);
     process.exit(1);
   }
 };
 
 startServer();
-
-
 
 

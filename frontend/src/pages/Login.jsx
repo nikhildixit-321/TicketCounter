@@ -9,7 +9,7 @@ import { GoogleLogin } from '@react-oauth/google'
 
 const Login = () => {
   const [state, setState] = useState('Sign up')
-  const [role, setRole] = useState('user') // 'user', 'doctor', 'admin'
+  const [role, setRole] = useState('user') 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -22,7 +22,6 @@ const Login = () => {
 
   const onSubmitHandler = async (event) => {
     event.preventDefault()
-
     try {
       if (state === 'Sign up') {
         const formData = new FormData()
@@ -32,10 +31,9 @@ const Login = () => {
         formData.append('phone', phone)
         formData.append('role', role)
         if (image) formData.append('image', image)
-
         const { data } = await axios.post(backendUrl + '/user/signup', formData)
         if (data) {
-          toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} account created! Please login.`)
+          toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} account created!`)
           setState('Login')
         }
       } else {
@@ -44,8 +42,6 @@ const Login = () => {
           localStorage.setItem('token', data.token)
           setToken(data.token)
           toast.success("Login Successful!")
-        } else {
-          toast.error(data.error || "Login Failed")
         }
       }
     } catch (error) {
@@ -53,15 +49,10 @@ const Login = () => {
     }
   }
 
-  useEffect(() => {
-    if (token) {
-      navigate('/')
-    }
-  }, [token])
-
-  const handleGoogleLogin = async (credentialResponse) => {
+  const handleGoogleSuccess = async (credentialResponse) => {
     try {
       const { credential } = credentialResponse;
+      if (!credential) throw new Error("No credential returned from Google");
       const { data } = await axios.post(backendUrl + '/user/google', { token: credential });
       if (data.token) {
         localStorage.setItem('token', data.token);
@@ -73,23 +64,19 @@ const Login = () => {
     }
   }
 
+  useEffect(() => {
+    if (token) navigate('/')
+  }, [token])
+
   return (
     <div className='min-h-[90vh] flex items-center justify-center py-10 px-4'>
-
       <div className='animate-fade-in w-full max-w-md'>
         <div className='bg-white border border-gray-200 shadow-xl rounded-2xl p-8 flex flex-col gap-6'>
-
-          {/* Header */}
           <div className='text-center'>
-            <h1 className='text-2xl font-bold text-gray-900'>
-              {state === 'Sign up' ? t('login_create') : t('login_welcome')}
-            </h1>
-            <p className='text-gray-500 text-sm mt-1 capitalize'>
-              {role} portal
-            </p>
+            <h1 className='text-2xl font-bold text-gray-900'>{state === 'Sign up' ? t('login_create') : t('login_welcome')}</h1>
+            <p className='text-gray-500 text-sm mt-1 capitalize'>{role} portal</p>
           </div>
 
-          {/* Role Switcher */}
           <div className='flex bg-gray-100 rounded-xl p-1 gap-1'>
             {['user', 'doctor', 'admin'].map((r) => (
               <button key={r} type='button' onClick={() => setRole(r)}
@@ -100,7 +87,6 @@ const Login = () => {
             ))}
           </div>
 
-          {/* Tab Switcher (Signup / Login) */}
           <div className='flex border-b border-gray-100'>
             {['Sign up', 'Login'].map((tab) => (
               <button key={tab} type='button' onClick={() => setState(tab)}
@@ -111,24 +97,26 @@ const Login = () => {
             ))}
           </div>
 
-          {/* Google Login (Only for patients/users) */}
           {role === 'user' && state === 'Login' && (
-            <div className='flex justify-center w-full'>
-              <GoogleLogin
-                onSuccess={credentialResponse => handleGoogleLogin(credentialResponse)}
-                onError={() => {
-                  toast.error('Google Login Initialization Failed');
-                }}
-                useOneTap
-                width="100%"
-                text="signin_with"
-                shape="rectangular"
-                theme="outline"
-              />
+            <div className='flex flex-col items-center gap-2'>
+              <div className='w-full flex justify-center'>
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={() => toast.error('Google Auth Failed')}
+                  useOneTap
+                  theme="outline"
+                  shape="rectangular"
+                  width="100%"
+                />
+              </div>
+              <div className='flex items-center w-full gap-2 my-1'>
+                <hr className='flex-1 border-gray-200' />
+                <span className='text-[10px] text-gray-400 font-bold'>OR LOGIN WITH EMAIL</span>
+                <hr className='flex-1 border-gray-200' />
+              </div>
             </div>
           )}
 
-          {/* Form */}
           <form onSubmit={onSubmitHandler} className='flex flex-col gap-4'>
             {state === 'Sign up' && (
               <>
@@ -144,58 +132,33 @@ const Login = () => {
                   <p className='text-xs text-gray-400 mt-2 font-bold'>Upload Profile Picture</p>
                 </div>
                 <div>
-                  <label className='text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5'>{t('login_name')}</label>
-                  <input
-                    className='w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-sm focus:border-primary focus:bg-white outline-none transition-all'
-                    type='text' placeholder='Full Name'
-                    onChange={(e) => setName(e.target.value)} value={name} required
-                  />
+                  <label className='text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5'>Full Name</label>
+                  <input className='w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-sm outline-none' type='text' onChange={(e) => setName(e.target.value)} value={name} required />
                 </div>
                 <div>
-                  <label className='text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5'>Phone Number</label>
-                  <input
-                    className='w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-sm focus:border-primary focus:bg-white outline-none transition-all'
-                    type='tel' placeholder='7007301900'
-                    onChange={(e) => setPhone(e.target.value)} value={phone} required
-                  />
+                  <label className='text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5'>Phone</label>
+                  <input className='w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-sm outline-none' type='tel' onChange={(e) => setPhone(e.target.value)} value={phone} required />
                 </div>
               </>
             )}
             <div>
-              <label className='text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5'>{t('login_email')}</label>
-              <input
-                className='w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-sm focus:border-primary focus:bg-white outline-none transition-all'
-                type='email' placeholder='you@example.com'
-                onChange={(e) => setEmail(e.target.value)} value={email} required
-              />
+              <label className='text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5'>Email</label>
+              <input className='w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-sm outline-none' type='email' onChange={(e) => setEmail(e.target.value)} value={email} required />
             </div>
             <div>
-              <label className='text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5'>{t('login_password')}</label>
-              <input
-                className='w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-sm focus:border-primary focus:bg-white outline-none transition-all'
-                type='password' placeholder='••••••••'
-                onChange={(e) => setPassword(e.target.value)} value={password} required
-              />
+              <label className='text-xs font-bold text-gray-500 uppercase tracking-widest block mb-1.5'>Password</label>
+              <input className='w-full px-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-sm outline-none' type='password' onChange={(e) => setPassword(e.target.value)} value={password} required />
             </div>
-
-            {state === 'Login' && (
-              <p className='text-xs text-right text-primary font-bold cursor-pointer hover:underline'>{t('login_forgot')}</p>
-            )}
-
             <button type='submit' className='btn-primary w-full py-4 mt-2 font-bold'>
-              {state === 'Sign up' ? `Create ${role} Account` : `Sign in as ${role}`}
+               {state === 'Sign up' ? `Create Account` : `Sign in`}
             </button>
           </form>
 
           <p className='text-center text-sm text-gray-500'>
             {state === 'Sign up' ? (
-              <>Already have an account?{' '}
-                <span onClick={() => setState('Login')} className='text-primary font-bold cursor-pointer hover:underline'>Login here</span>
-              </>
+              <>Already have an account? <span onClick={() => setState('Login')} className='text-primary font-bold cursor-pointer'>Login here</span></>
             ) : (
-              <>New here?{' '}
-                <span onClick={() => setState('Sign up')} className='text-primary font-bold cursor-pointer hover:underline'>Create account</span>
-              </>
+              <>New here? <span onClick={() => setState('Sign up')} className='text-primary font-bold cursor-pointer'>Create account</span></>
             )}
           </p>
         </div>
@@ -205,4 +168,3 @@ const Login = () => {
 }
 
 export default Login
-
