@@ -106,15 +106,37 @@ router.post('/onboard-doctor', upload.fields([
     { name: 'license', maxCount: 1 }
 ]), async (req, res) => {
     try {
-        const { email, speciality, degree, college, experience, regNumber, fees, availability, address, city, state } = req.body;
+        const { 
+            email, speciality, degree, college, experience, regNumber, 
+            adharNumber, clinicName, clinicTiming, fees, availability, 
+            address, city, state,
+            home_lat, home_long, clinic_lat, clinic_long 
+        } = req.body;
         
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ error: "User not found" });
 
         const updateData = {
-            speciality, degree, college, experience, regNumber, fees, availability, address, city, state,
+            speciality, degree, college, experience, regNumber, 
+            adharNumber, clinicName, clinicTiming, fees, availability, address, city, state,
             status: 'pending' // Reset to pending after update for admin review
         };
+
+        // Update Home Location if provided
+        if (home_lat && home_long) {
+            updateData.location = {
+                type: 'Point',
+                coordinates: [parseFloat(home_long), parseFloat(home_lat)]
+            };
+        }
+
+        // Update Clinic Location if provided
+        if (clinic_lat && clinic_long) {
+            updateData.clinicLocation = {
+                type: 'Point',
+                coordinates: [parseFloat(clinic_long), parseFloat(clinic_lat)]
+            };
+        }
 
         if (req.files['certificate']) {
             const result = await uploadToCloudinary(req.files['certificate'][0].buffer);
@@ -132,6 +154,7 @@ router.post('/onboard-doctor', upload.fields([
         const updatedUser = await User.findOneAndUpdate({ email }, updateData, { new: true });
         res.status(200).json(updatedUser);
     } catch (error) {
+        console.error("ONBOARD ERROR:", error.message);
         res.status(500).json({ error: error.message });
     }
 });

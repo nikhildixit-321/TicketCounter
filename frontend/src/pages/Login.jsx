@@ -50,8 +50,20 @@ const Login = () => {
         if (image) formData.append('image', image)
         const { data } = await axios.post(backendUrl + '/user/signup', formData)
         if (data) {
-          toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} account created! Redirecting to login...`)
-          setState('Login')
+          toast.success(`${role.charAt(0).toUpperCase() + role.slice(1)} account created successfully!`)
+          
+          if (role === 'doctor') {
+            // Auto-signin for doctor to start onboarding
+            const res = await axios.post(backendUrl + '/user/signin', { email, password })
+            if (res.data.token) {
+              localStorage.setItem('token', res.data.token)
+              localStorage.setItem('role', res.data.user.role)
+              setToken(res.data.token)
+              navigate('/doctor/onboard')
+            }
+          } else {
+            setState('Login')
+          }
         }
       } else {
         const { data } = await axios.post(backendUrl + '/user/signin', { email, password })

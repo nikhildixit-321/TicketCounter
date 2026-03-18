@@ -120,33 +120,47 @@ const AdminDoctors = () => {
                                 </div>
                             </div>
 
-                            <div className='grid grid-cols-2 gap-3'>
-                                <div className='bg-gray-50/50 p-4 rounded-2xl border border-gray-100'>
-                                    <p className='text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1'>Fees / Visit</p>
-                                    <p className='text-lg font-black text-gray-900 tracking-tight'>₹{doc.fees || '0'}</p>
-                                </div>
-                                <div className='bg-gray-50/50 p-4 rounded-2xl border border-gray-100'>
-                                    <p className='text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1'>Experience</p>
-                                    <p className='text-lg font-black text-gray-900 tracking-tight'>{doc.experience || 'NEW'}</p>
-                                </div>
-                            </div>
+                             <div className='bg-slate-900/5 p-4 rounded-2xl border border-slate-900/10'>
+                                 <p className='text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1'>Govt Verified ID (Aadhaar/PAN)</p>
+                                 <p className='text-xs font-black text-slate-900 font-mono tracking-widest'>{doc.adharNumber || 'RECORD_MISSING'}</p>
+                             </div>
 
-                            <div className='space-y-3 opacity-80'>
-                                <div className='flex items-center gap-3'>
-                                    <div className='w-8 h-8 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600 text-sm'>🎓</div>
-                                    <div>
-                                        <p className='text-[10px] font-bold text-gray-400 uppercase'>Medical Qualifications</p>
-                                        <p className='text-xs font-bold text-gray-700'>{doc.degree || 'Pending Verification'}</p>
-                                    </div>
-                                </div>
-                                <div className='flex items-center gap-3'>
-                                    <div className='w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-sm'>📍</div>
-                                    <div>
-                                        <p className='text-[10px] font-bold text-gray-400 uppercase'>Clinic Location</p>
-                                        <p className='text-xs font-bold text-gray-700 truncate max-w-[180px]'>{doc.city || 'Remote Consult'}</p>
-                                    </div>
-                                </div>
-                            </div>
+                             <div className='grid grid-cols-2 gap-3'>
+                                 <div className='bg-gray-50/50 p-4 rounded-2xl border border-gray-100'>
+                                     <p className='text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1'>Fees / Visit</p>
+                                     <p className='text-lg font-black text-gray-900 tracking-tight'>₹{doc.fees || '0'}</p>
+                                 </div>
+                                 <div className='bg-gray-50/50 p-4 rounded-2xl border border-gray-100'>
+                                     <p className='text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1'>Experience</p>
+                                     <p className='text-lg font-black text-gray-900 tracking-tight'>{doc.experience || 'NEW'}</p>
+                                 </div>
+                             </div>
+
+                             <div className='space-y-3 opacity-90'>
+                                 <div className='flex items-center gap-3 bg-blue-50/30 p-3 rounded-xl border border-blue-50/50'>
+                                     <div className='w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 text-sm shadow-sm'>🏥</div>
+                                     <div className='overflow-hidden'>
+                                         <p className='text-[10px] font-black text-blue-400 uppercase leading-none mb-1'>Clinic Node</p>
+                                         <p className='text-[11px] font-black text-blue-900 truncate uppercase'>{doc.clinicName || 'Pending Designation'}</p>
+                                     </div>
+                                 </div>
+                                 <div className='flex items-center gap-3'>
+                                     <div className='w-8 h-8 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600 text-sm'>🎓</div>
+                                     <div>
+                                         <p className='text-[10px] font-bold text-gray-400 uppercase leading-none mb-1'>Credentials</p>
+                                         <p className='text-xs font-bold text-gray-700 uppercase'>{doc.degree || 'Verification Required'}</p>
+                                     </div>
+                                 </div>
+                                 {doc.clinicTiming && (
+                                     <div className='flex items-center gap-3'>
+                                         <div className='w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-sm'>🕒</div>
+                                         <div>
+                                             <p className='text-[10px] font-bold text-gray-400 uppercase leading-none mb-1'>Operating Cycles</p>
+                                             <p className='text-xs font-bold text-gray-700 uppercase'>{doc.clinicTiming}</p>
+                                         </div>
+                                     </div>
+                                 )}
+                             </div>
 
                             {tab === 'pending' ? (
                                 <div className='flex gap-3 mt-4'>

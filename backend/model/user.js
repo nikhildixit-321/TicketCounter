@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     // Status for Admin Approval (mostly for doctors)
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
     
-    // Location for proximity search
+    // Location for proximity search (Home/Profile Base)
     location: {
         type: { type: String, default: 'Point' },
         coordinates: { type: [Number], default: [0, 0] } // [longitude, latitude]
@@ -24,12 +24,20 @@ const userSchema = new mongoose.Schema({
     city: { type: String, default: '' },
     state: { type: String, default: '' },
 
-    // Doctor Specific Fields
+    // Doctor Specific Fields (Enhanced)
     speciality: { type: String, default: '' },
     degree: { type: String, default: '' },
     college: { type: String, default: '' },
     experience: { type: String, default: '' },
     regNumber: { type: String, default: '' },
+    adharNumber: { type: String, default: '' }, // New Field
+    clinicName: { type: String, default: '' },    // New Field
+    clinicLocation: {                            // New Field
+        type: { type: String, default: 'Point' },
+        coordinates: { type: [Number], default: [0, 0] }
+    },
+    clinicTiming: { type: String, default: '' }, // e.g. "9:00 AM - 6:00 PM"
+    
     fees: { type: Number, default: 0 },
     availability: { type: String, default: '' }, // e.g. "Mon,Tue,Wed"
     about: { type: String, default: '' },
@@ -45,6 +53,7 @@ const userSchema = new mongoose.Schema({
 })
 
 userSchema.index({ location: "2dsphere" });
+userSchema.index({ clinicLocation: "2dsphere" });
 
 
 userSchema.pre("save", async function () {
