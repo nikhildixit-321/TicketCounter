@@ -56,15 +56,21 @@ userSchema.index({ location: "2dsphere" });
 userSchema.index({ clinicLocation: "2dsphere" });
 
 
-userSchema.pre("save", async function () {
+userSchema.pre("save", function (next) {
     const user = this;
-    if (!user.isModified("password") || !user.password) return;
-    const salt = randomBytes(16).toString('hex');
-    const hashedPassword = createHmac('sha256', salt)
-        .update(user.password)
-        .digest('hex');
-    this.salt = salt;
-    this.password = hashedPassword;
+    if (!user.isModified("password") || !user.password) return next();
+    
+    try {
+        const salt = randomBytes(16).toString('hex');
+        const hashedPassword = createHmac('sha256', salt)
+            .update(user.password)
+            .digest('hex');
+        this.salt = salt;
+        this.password = hashedPassword;
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
 userSchema.statics.matchPasswordAndGenerateToken = async function (email, password) {

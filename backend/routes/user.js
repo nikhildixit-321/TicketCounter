@@ -37,9 +37,10 @@ router.get('/logout', (req, res) => {
     }).json({ message: "Logged out" });
 });
 
-router.post('/signup', upload.single('image'), async (req, res, next) => {
+router.post('/signup', upload.single('image'), async (req, res) => {
     try {
         console.log("SIGNUP REQUEST:", req.body.email);
+        console.log("PROFILE IMAGE STATUS:", req.file ? "Uploaded" : "No image provided");
         const { name, email, password, phone, role } = req.body;
         
         const existingUser = await User.findOne({ email });
@@ -58,13 +59,15 @@ router.post('/signup', upload.single('image'), async (req, res, next) => {
         return res.status(201).json(user);
     } catch (error) {
         console.error("SIGNUP FATAL ERROR:", error.message);
+        console.error("ERROR STACK:", error.stack);
         res.status(400).json({ error: error.message });
     }
 });
 
-router.post('/google', async (req, res, next) => {
+router.post('/google', async (req, res) => {
     const { token, role, phone } = req.body;
     try {
+        console.log("GOOGLE AUTH ATTEMPT:", token?.slice(0, 10) + "...");
         const ticket = await client.verifyIdToken({
             idToken: token,
             audience: process.env.GOOGLE_CLIENT_ID,
